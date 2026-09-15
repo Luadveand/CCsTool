@@ -1,0 +1,14 @@
+# audio fuente (124 MB, no versionable)
+*.mp3
+*.MP3
+*.mpeg
+*.m4a
+*.wav
+
+# entornos y caches de python
+.venv*/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store

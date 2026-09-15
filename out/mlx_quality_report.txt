@@ -1,0 +1,102 @@
+INFORME DE CALIDAD — SALIDA mlx_whisper (out/pelicula.*)
+Fuente: out/pelicula.srt | Audio: 0708.MP3.mpeg | Duración audio: 5434.54 s
+Fecha: 2026-09-15 | Solo medición, sin modificaciones
+
+TOTAL SEGMENTOS SRT: 679
+TEXTO: 679 líneas / 2727 palabras en pelicula.txt
+ÚLTIMO SUBTÍTULO: 01:30:32,380 --> 01:30:33,380 (fin 5433.38 s = 99.98% del metraje; no truncado)
+
+=====================================================================
+1) SEGMENTOS CON DURACIÓN >= 25 s: 47
+=====================================================================
+Formato: #índice | inicio --> fin | dur | palabras | texto
+
+  #1    00:00:00,000 --> 00:00:29,980 | 30.0s |   5 | El Día de la Cámara
+  #2    00:00:30,000 --> 00:00:59,980 | 30.0s |   2 | La Biblia
+  #12   00:01:58,000 --> 00:02:27,980 | 30.0s |   3 | ¡Suscríbete al canal!
+  #38   00:04:23,140 --> 00:04:53,120 | 30.0s |   3 | ¡Suscríbete al canal!
+  #64   00:06:23,140 --> 00:06:53,120 | 30.0s |   3 | ¡Suscríbete al canal!
+  #74   00:07:53,140 --> 00:08:23,120 | 30.0s |   2 | La Baja
+  #75   00:08:23,140 --> 00:08:53,120 | 30.0s |   3 | ¡Suscríbete al canal!
+  #76   00:08:53,140 --> 00:09:23,120 | 30.0s |   3 | ¡Suscríbete al canal!
+  #77   00:09:23,140 --> 00:09:53,120 | 30.0s |   3 | ¡Suscríbete al canal!
+  #96   00:10:51,380 --> 00:11:21,360 | 30.0s |   3 | ¡Suscríbete al canal!
+  #98   00:11:51,380 --> 00:12:21,360 | 30.0s |   3 | ¡Suscríbete al canal!
+  #112  00:13:51,380 --> 00:14:21,360 | 30.0s |   2 | ¿Qué pasa?
+  #115  00:14:51,380 --> 00:15:21,360 | 30.0s |   3 | ¡Suscríbete al canal!
+  #165  00:18:50,740 --> 00:19:20,720 | 30.0s |   2 | ¿Qué pasa?
+  #174  00:20:20,740 --> 00:20:50,720 | 30.0s |   3 | ¡Suscríbete al canal!
+  #175  00:20:50,740 --> 00:21:20,720 | 30.0s |   2 | La Baja
+  #178  00:22:20,740 --> 00:22:50,720 | 30.0s |   3 | ¡Suscríbete al canal!
+  #179  00:22:50,740 --> 00:23:20,720 | 30.0s |   3 | ¡Suscríbete al canal!
+  #183  00:24:50,740 --> 00:25:16,500 | 25.8s |   3 | Quiero mucho dinero.
+  #184  00:25:20,740 --> 00:25:50,740 | 30.0s | 112 | TORRES DE LA TORRES DE LA ... (bucle de decodificación, texto repetido)
+  #185  00:25:50,740 --> 00:26:20,720 | 30.0s |   2 | La Biblia
+  #203  00:27:50,740 --> 00:28:20,720 | 30.0s |   2 | ¿Qué pasa?
+  #246  00:33:10,780 --> 00:33:40,760 | 30.0s |   2 | ¿Qué pasa?
+  #270  00:36:40,020 --> 00:37:10,000 | 30.0s |   3 | ¡Suscríbete al canal!
+  #280  00:37:40,020 --> 00:38:10,000 | 30.0s |   3 | ¡Suscríbete al canal!
+  #281  00:38:10,020 --> 00:38:40,000 | 30.0s |   3 | ¡Suscríbete al canal!
+  #282  00:38:40,020 --> 00:39:10,000 | 30.0s |   3 | ¡Suscríbete al canal!
+  #330  00:47:32,020 --> 00:48:02,000 | 30.0s |   2 | La Biblia
+  #331  00:48:02,020 --> 00:48:32,000 | 30.0s |   2 | La Biblia
+  #332  00:48:32,020 --> 00:49:02,000 | 30.0s |   2 | La Biblia
+  #333  00:49:02,020 --> 00:49:32,000 | 30.0s |   2 | La Biblia
+  #374  00:56:58,180 --> 00:57:25,360 | 27.2s |  11 | Esta noche tiene 10 millones de razones para quedarse con nosotros.
+  #473  01:03:33,160 --> 01:04:03,140 | 30.0s |   2 | La Baja
+  #480  01:05:03,160 --> 01:05:33,140 | 30.0s |   3 | ¡Suscríbete al canal!
+  #528  01:10:31,320 --> 01:11:01,300 | 30.0s |   2 | ¿Qué pasa?
+  #534  01:11:31,320 --> 01:12:01,300 | 30.0s |   3 | ¡Suscríbete al canal!
+  #541  01:12:57,320 --> 01:13:27,300 | 30.0s |   2 | ¿Qué pasa?
+  #558  01:15:23,640 --> 01:15:53,620 | 30.0s |  11 | La Iglesia de Jesucristo de los Santos de los Últimos Días
+  #575  01:17:51,640 --> 01:18:21,620 | 30.0s |  11 | La Iglesia de Jesucristo de los Santos de los Últimos Días
+  #576  01:18:21,640 --> 01:18:51,620 | 30.0s |   6 | ¿Qué es lo que se llama?
+  #616  01:21:49,640 --> 01:22:19,620 | 30.0s |   2 | La Biblia
+  #617  01:22:19,640 --> 01:22:49,620 | 30.0s |   7 | ¿Quién es el rey de la tierra?
+  #642  01:25:07,380 --> 01:25:37,360 | 30.0s |   2 | La Biblia
+  #652  01:26:37,380 --> 01:27:07,360 | 30.0s |   2 | La Biblia
+  #675  01:28:32,380 --> 01:29:02,360 | 30.0s |   3 | ¡Suscríbete al canal!
+  #676  01:29:02,380 --> 01:29:32,360 | 30.0s |   3 | ¡Suscríbete al canal!
+  #677  01:29:32,380 --> 01:30:02,360 | 30.0s |   9 | En la calle, en la calle, en la calle
+
+Patrones del texto en estas ventanas:
+  ¡Suscríbete al canal!  x24   |  La Biblia x9  |  ¿Qué pasa? x6
+  La Baja x3  |  TORRES DE LA... x1 (bucle)  |  otros x4
+
+=====================================================================
+2) SEGMENTOS >= 10 s CON <= 6 PALABRAS (ventanas sospechosas): 62
+=====================================================================
+Segundos ocupados por estas ventanas: 1564.1 s (28.8% del audio)
+(Ejemplos: #1, #2, #12, #38, #39 12.0s "Buenas tardes, señor Aníbal.",
+ #45 13.3s "¿Qué es eso?", #100 18.0s "Buenas noches.",
+ #166 18.6s "¡Puérate!", #181 16.9s, #183 25.8s, #223 23.9s ...)
+
+=====================================================================
+3) SEGMENTOS < 5 s (diálogo plausible): 568
+=====================================================================
+Suma de segundos: 956.9 s (17.6% del audio)
+Suma de palabras: 2071
+Densidad: 2.16 palabras/segundo
+
+  ¡Suscríbete al canal!  x20   |  La Biblia x9  |  ¿Qué pasa? x6
+4) SEGMENTOS >= 10 s: 76
+=====================================================================
+Suma de segundos: 1862.2 s (34.3% del audio)
+Suma de palabras: 431
+Densidad: 0.23 palabras/segundo
+(Nota: 30 de esos 76 son ventanas de exactamente 30.000 s)
+
+=====================================================================
+5) COBERTURA TEMPORAL / HUECOS
+=====================================================================
+Audio total:                        5434.5 s
+Cubierto por segmentos:             3052.8 s (56.2%)
+SIN cubrir (huecos):                2381.7 s (43.8%)  en 510 huecos
+Último subtítulo termina en:        5433.4 s (99.98% del metraje)
+
+Resumen operativo:
+  - Ventanas degeneradas >= 25 s: 47 (sobre música/silencio, texto
+    de 2-11 palabras casi siempre repetido; incluye 1 bucle TORRES x112)
+  - Ventanas sospechosas >=10s y <=6 palabras: 62 que ocupan 1564.1 s
+  - Diálogo plausible (<5 s): 568 segmentos a 2.16 palabras/s
+  - Comparativa de densidad: <5s -> 2.16 w/s | >=10s -> 0.23 w/s

@@ -1,0 +1,70 @@
+GAP REPORT — diálogo real de un motor sin ningún solape del otro
+(REGENERADO tras corregir la regla de clean: densidad 0.05 pal/s con recorte
+de ventanas infladas; fw_clean = 380 segmentos)
+Fuente A: out/pelicula_clean.srt   (mlx limpio, 539 segmentos)
+Fuente B: out/pelicula_fw_clean.srt (fw+VAD limpio, 380 segmentos)
+Diálogo real = duración < 5 s y >= 3 palabras. Solape = intersección temporal > 0 contra CUALQUIER segmento del otro motor.
+
+1) Diálogo real de mlx SIN NINGÚN solape de fw: 43 segmentos, 206 palabras, 94.4 s
+2) Diálogo real de fw  SIN NINGÚN solape de mlx: 19 segmentos, 89 palabras, 57.7 s
+
+Los 30 primeros huecos de mlx (ordenados por duración):
+   #    inicio       fin   dur pal  texto
+   1  01:28:26  01:28:31   4.8   4  ¡Muy a mi haguo!
+   2  00:28:50  00:28:54   4.0   7  Por eso te bajaste de la vida.
+   3  00:52:28  00:52:32   4.0   3  Anda, fuma tranquilo.
+   4  00:35:16  00:35:19   3.6  12  Que su propiedad está siendo evaluada como posible zona de interés cultural.
+   5  01:04:06  01:04:10   3.4   6  Necesito cigarritos, por favor, véndame cigarritos.
+   6  00:35:20  00:35:23   3.2  11  A partir de ahora no podrá realizar ninguna obra sin autorización.
+   7  00:41:57  00:42:00   3.2   7  antes de que llegue el maldito inspector.
+   8  00:10:40  00:10:43   3.0   3  Pucha, ni modo.
+   9  00:14:47  00:14:50   3.0   8  ¡Ese es mi plata! ¡Suelta mi plata! ¡Súbétala!
+  10  00:28:54  00:28:57   3.0   7  Por eso te bajaste de la vida.
+  11  00:59:56  00:59:59   3.0   4  Solo queda una bolilla
+  12  01:20:26  01:20:29   3.0   5  ¡No hay nada que ver!
+  13  00:59:59  01:00:02   2.9   7  por revelar y dentro de esta canasta
+  14  01:04:03  01:04:05   2.6   3  Ya estamos cerrados.
+  15  01:06:00  01:06:02   2.6   6  Aquí te traigo unos regalitos, Taita.
+  16  01:02:28  01:02:31   2.3   6  No dejes de comprar tu boleto
+  17  00:07:16  00:07:19   2.2   3  Quiero mucho dinero.
+  18  00:35:30  00:35:32   2.1   7  Espere la llegada de los inspectores, señora.
+  19  00:47:15  00:47:17   2.1   3  hasta los pies.
+  20  00:01:07  00:01:09   2.0   5  Ellos mataron a mi Carmelo.
+  21  00:47:10  00:47:12   2.0   3  Desde la cabeza...
+  22  01:00:04  01:00:06   2.0   3  El número de...
+  23  01:19:45  01:19:47   2.0   3  Carmelo merece venganza.
+  24  01:20:21  01:20:23   2.0   5  ¡No hay nada que ver!
+  25  01:24:49  01:24:51   2.0   4  Cálmate, mamá. Ya pasó.
+  26  01:25:37  01:25:39   2.0   7  Tu cuida me duro, no hay nada.
+  27  01:25:41  01:25:43   2.0   4  han tan tu pasos,
+  28  00:41:55  00:41:57   1.9   5  Tengo que cargar todo esto
+  29  00:32:05  00:32:07   1.9   4  Tú, ¿qué me miras?
+  30  01:02:31  01:02:33   1.9   4  porque el próximo millonario
+
+Los 30 primeros huecos de fw (ordenados por duración):
+   #    inicio       fin   dur pal  texto
+   1  00:00:09  00:00:13   3.5   5  Ellos mataron a mi Carmelo.
+   2  00:04:04  00:04:07   3.1   4  Buenas tardes, señor Aníbal.
+   3  00:05:19  00:05:22   3.1   4  Eso es un equeco.
+   4  00:06:23  00:06:27   3.5   5  Juan, no me has asustado.
+   5  00:18:05  00:18:09   3.9   6  ¿Puedes ir a regar el jardín?
+   6  00:19:12  00:19:16   3.1   4  Lo que te debo.
+   7  00:31:36  00:31:37   0.8   3  ¿Qué tal, Janet?
+   8  00:41:44  00:41:47   3.1   4  Llegué el maldito inspector.
+   9  00:51:40  00:51:44   3.9   6  Parece que no nos estamos entendiendo
+  10  00:52:03  00:52:05   2.7   3  Anda, Puma, tranquilo
+  11  00:55:17  00:55:20   2.7   3  Quiero esos millones
+  12  00:55:54  00:55:58   3.9   6  Te voy a dar tu coquita
+  13  01:02:20  01:02:23   3.1   4  Porque el próximo millonario
+  14  01:03:23  01:03:27   3.9   6  ¡Necesito cigarritos! ¡Por favor, véndame cigarritos!
+  15  01:05:42  01:05:46   3.9   6  Aquí te traigo unos regalitos, Taita.
+  16  01:06:37  01:06:40   3.1   4  ¿Qué culpa tengo yo
+  17  01:16:44  01:16:47   3.1   4  Te busco a ti
+  18  01:18:42  01:18:43   1.2   6  Tú sabes lo que yo busco.
+  19  01:18:48  01:18:50   2.1   6  Aquí te traigo unos regalitos, Taita.
+
+Los 3 huecos más largos de mlx (verificación de audio hecha el 2026-09-15:
+murmullo real, grito ilegible y alucinación de mlx; ver NOTAS.md):
+  #1 01:28:26 -> 01:28:31 dur=4.8s | ¡Muy a mi haguo!
+  #2 00:28:50 -> 00:28:54 dur=4.0s | Por eso te bajaste de la vida.
+  #3 00:52:28 -> 00:52:32 dur=4.0s | Anda, fuma tranquilo.
