@@ -12,3 +12,7 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# derivados de la interfaz de revisión (copias de out/ y del audio fuente)
+review/words.json
+review/audio.mp3

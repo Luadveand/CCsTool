@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revisión de subtítulos — 0708.MP3.mpeg</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <h1>Revisión de subtítulos</h1>
+  <div class="top-right">
+    <span id="srcName" class="badge">—</span>
+    <span id="srcInfo" class="muted">cargando…</span>
+  </div>
+</header>
+
+<div id="banner" class="banner hidden" role="status"></div>
+
+<section class="bar">
+  <audio id="audio" controls preload="metadata" src="audio.mp3"></audio>
+
+  <div class="group">
+    <label class="lab" for="offset">Offset</label>
+    <button id="offMinus" class="btn sq" title="−50 ms  (atajo: ,)">−</button>
+    <input id="offset" type="number" min="-5000" max="5000" step="50" value="0">
+    <button id="offPlus" class="btn sq" title="+50 ms  (atajo: .)">+</button>
+    <span class="unit">ms</span>
+    <span id="offNow" class="badge mono">0 ms</span>
+    <button id="offReset" class="btn" title="Volver a 0">reset</button>
+  </div>
+
+  <div class="group">
+    <label class="btn file" for="fileInput">Cargar words.json…</label>
+    <input id="fileInput" type="file" accept=".json,application/json" hidden>
+    <button id="discard" class="btn danger">Descartar cambios guardados</button>
+  </div>
+</section>
+
+<section class="bar wrap">
+  <div class="group filters" id="filters">
+    <button class="btn filt" data-filter="all">Todos</button>
+    <button class="btn filt" data-filter="dudosos">Solo dudosos</button>
+    <button class="btn filt" data-filter="pendientes">Sin revisar</button>
+  </div>
+
+  <div class="group">
+    <input id="buscar" type="search" placeholder="Buscar texto… (Enter = ir)" autocomplete="off"
+           spellcheck="false" aria-label="Buscar texto en los subtítulos">
+    <button id="buscarClear" class="btn sq" title="Limpiar búsqueda">✕</button>
+  </div>
+
+  <div class="group counters">
+    <span class="badge" id="cRev">revisados 0 / 0</span>
+    <span class="badge" id="cDud">dudosos 0</span>
+    <span class="badge" id="cVis">visibles 0</span>
+    <span class="badge hidden" id="cBusca" title="Segmentos que contienen el texto buscado, sin aplicar el filtro activo">coinciden 0</span>
+  </div>
+
+  <div class="group">
+    <button id="expSrt" class="btn primary">Exportar TRANSCRIPT_revisado.srt</button>
+    <button id="expJson" class="btn">Exportar correcciones .json</button>
+  </div>
+</section>
+
+<main id="list" class="list" tabindex="-1"></main>
+
+<footer class="keys">
+  <span class="k"><kbd>Espacio</kbd> play/pausa</span>
+  <span class="k"><kbd>J</kbd> siguiente</span>
+  <span class="k"><kbd>K</kbd> anterior</span>
+  <span class="k"><kbd>R</kbd> revisado on/off</span>
+  <span class="k"><kbd>,</kbd> offset −50 ms</span>
+  <span class="k"><kbd>.</kbd> offset +50 ms</span>
+  <span class="k legend-normal">p ≥ 0.85</span>
+  <span class="k legend-amber">0.60 ≤ p &lt; 0.85</span>
+  <span class="k legend-red">p &lt; 0.60</span>
+  <span class="k muted">Los atajos se desactivan mientras escribes en un segmento.</span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

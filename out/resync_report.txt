@@ -1,0 +1,120 @@
+total_subtitulos=297
+duracion_media=2.51s
+distribucion_duraciones:
+  <1s: 0
+  1-2s: 128
+  2-3s: 82
+  3-5s: 68
+  5-6s: 19
+  >6s: 0
+exceden_21cps=49
+descartados=4 (conf_baja=4)
+fusiones_sintacticas (timestamp_resultante | texto):
+  00:30:14,250 --> 00:30:18,430 | Me parece a uno que vi hace muchos años.
+  00:32:42,410 --> 00:32:46,470 | Yo comienzo un trabajito el lunes y el próximo mes ya le completaría todo.
+  00:37:06,440 --> 00:37:08,940 | Quedamos en algo, señor. No entiendo por qué ahora me está haciendo esto.
+  00:54:56,920 --> 00:55:02,330 | 30 soles. 30 soles. Estas
+  00:56:30,050 --> 00:56:35,270 | cigarrito Todos los días Esta
+  01:07:49,550 --> 01:07:53,270 | Nosotros solo te estamos pidiendo lo que nos corresponde. No
+  01:08:18,270 --> 01:08:22,050 | Ahora que se leyó el testamento
+  01:19:02,600 --> 01:19:07,440 | No he venido a que me des tus consejos
+  01:19:43,860 --> 01:19:47,660 | Carmelo merece venganza.
+  01:24:25,420 --> 01:24:31,080 | Tuvieron lo que se merecían Lo que le hicieron a papá Dios
+  01:24:59,210 --> 01:25:04,660 | ¿Enfermera? Está alterando su mente. Tranquilízase, tranquila.
+recolocados=24
+recolocados (ts_corrupto | ts_asignado | palabra | subtitulo):
+  00:00:28,630 --> 00:00:29,170 | 00:01:07,570 --> 00:01:08,850 | Ellos | Ellos mataron a mi Carmelo.
+  00:04:04,360 --> 00:04:04,800 | 00:05:04,070 --> 00:05:06,330 | Buenas | Buenas tardes, / señor Aníbal. ¿Cómo estás, Juana?
+  00:07:43,400 --> 00:07:43,860 | 00:10:19,350 --> 00:10:20,730 | No | No voy a poder ir No,
+  00:13:08,900 --> 00:13:09,240 | 00:10:44,340 --> 00:10:46,660 | noches | Félix, te llamo después Dale Buenas noches
+  00:30:00,480 --> 00:30:00,680 | 00:30:14,250 --> 00:30:18,430 | Me | Me parece a uno que vi hace muchos años.
+  00:31:35,320 --> 00:31:35,800 | 00:30:45,680 --> 00:30:49,400 | Ophelia. | Los sapos. No se equivoca. Señor Ophelia.
+  00:35:38,160 --> 00:35:38,600 | 00:35:59,120 --> 00:36:02,520 | En | En las noches, allá, la luz sale de abajo.
+  00:36:03,060 --> 00:36:03,440 | 00:37:06,440 --> 00:37:08,940 | Quedamos | Quedamos en algo, señor. No entiendo / por qué ahora me está haciendo esto.
+  00:50:35,750 --> 00:50:36,050 | 00:50:56,180 --> 00:50:57,940 | No | No merecías estar en la tienda.
+  00:51:02,840 --> 00:51:03,140 | 00:51:34,690 --> 00:51:36,190 | Te | Te voy a dar todo lo que te gusta.
+  00:51:40,190 --> 00:51:41,130 | 00:52:01,480 --> 00:52:03,940 | Parece | Parece / que no nos estamos entendiendo. Anda,
+  00:52:31,460 --> 00:52:32,060 | 00:54:14,300 --> 00:54:16,860 | Tú | Tú hiciste esto. Tú hiciste esto.
+  00:54:26,240 --> 00:54:26,840 | 00:54:56,920 --> 00:55:02,330 | 30 | 30 soles. 30 soles. Estas
+  00:55:17,700 --> 00:55:18,640 | 00:55:39,160 --> 00:55:40,980 | Quiero | Quiero esos millones Te
+  00:55:54,730 --> 00:55:54,890 | 00:56:19,780 --> 00:56:21,980 | Te | Te voy a dar tu coquita Tu
+  00:56:43,220 --> 00:56:44,280 | 00:57:56,660 --> 00:57:59,820 | Mucha | Mucha atención porque ya empiezan / a girar las bolillas
+  00:58:03,240 --> 00:58:03,900 | 00:58:14,650 --> 00:58:18,170 | Y | Y el primer número es... ¡Ocho!
+  00:58:18,170 --> 00:58:19,090 | 00:58:33,550 --> 00:58:35,290 | Vamos | Vamos por el segundo 22
+  01:02:02,880 --> 01:02:03,840 | 01:02:14,720 --> 01:02:17,880 | ¿Qué | ¿Qué estás haciendo? Niñeco de mierda
+  01:02:20,180 --> 01:02:21,240 | 01:02:31,700 --> 01:02:34,840 | Porque | Porque el próximo / millonario podría ser usted
+  01:05:42,600 --> 01:05:43,120 | 01:06:00,880 --> 01:06:02,740 | Aquí | Aquí te traigo unos regalitos, Taita.
+  01:06:37,020 --> 01:06:37,120 | 01:07:44,300 --> 01:07:48,590 | son. | son. ¿Qué culpa tengo yo / que no los quisiera a ustedes?
+  01:07:24,200 --> 01:07:24,680 | 01:07:44,300 --> 01:07:48,590 | ¿Qué | son. ¿Qué culpa tengo yo / que no los quisiera a ustedes?
+  01:23:07,300 --> 01:23:08,220 | 01:23:19,040 --> 01:23:20,160 | Tú | Tú ya sabes el protocolo
+descartados (motivo | timestamp | texto | detalle):
+  conf_baja | 00:01:11,070 --> 00:01:12,810 | Angra, suena como una chiscuña. | conf=0.38
+  conf_baja | 00:58:42,360 --> 00:58:43,360 | Te | conf=0.16
+  conf_baja | 00:59:08,480 --> 00:59:12,520 | Las bolillas siguen girando Y el Es | conf=0.57
+  conf_baja | 00:59:21,680 --> 00:59:22,680 | Vamos | conf=0.25
+aislados_conservados (timestamp | texto | hueco_prev | hueco_next | conf):
+  00:03:36,190 --> 00:03:39,550 | Debería ser. ¡Cuidado! | prev=5.20s | next=7.41s | conf=0.82
+  00:04:02,220 --> 00:04:03,980 | Bueno, te dejo estos documentos, ¿sí? | prev=3.02s | next=60.09s | conf=0.95
+  00:06:19,380 --> 00:06:22,840 | Vamos, Juana. Cambia esa cara. Ya vendrán tiempos mejores. | prev=3.15s | next=65.33s | conf=0.99
+  00:10:19,350 --> 00:10:20,730 | No voy a poder ir No, | prev=155.95s | next=3.29s | conf=0.96
+  00:10:44,340 --> 00:10:46,660 | Félix, te llamo después Dale Buenas noches | prev=4.43s | next=143.16s | conf=0.95
+  00:13:45,650 --> 00:13:49,260 | puedo ayudar con algo más? Eso es todo. ¡Suéltala! | prev=5.47s | next=91.98s | conf=0.97
+  00:15:21,240 --> 00:15:22,460 | Oye, ¿de dónde has tocado esto? | prev=91.98s | next=9.21s | conf=0.87
+  00:15:50,120 --> 00:15:52,700 | Qué rico, tenía una sed. ¿Me traes otra, porfa? | prev=3.57s | next=3.38s | conf=0.87
+  00:15:56,080 --> 00:16:01,490 | Sí, sí, claro. Oye, ¿está bien? Sí. | prev=3.38s | next=21.36s | conf=0.99
+  00:16:22,850 --> 00:16:27,510 | Bonito sortudo. Vas a ver ahora cómo todo sí funciona. | prev=21.36s | next=5.95s | conf=0.94
+  00:16:52,850 --> 00:16:54,350 | Cuéntame, ¿cómo llegó eso a tus manos? | prev=4.42s | next=3.31s | conf=1.00
+  00:19:11,070 --> 00:19:13,190 | ¿Puedes ir a regar el jardín? Lo | prev=65.49s | next=31.23s | conf=0.92
+  00:19:59,470 --> 00:20:01,670 | Tómate el día libre. ¿Portimos | prev=4.59s | next=244.77s | conf=0.96
+  00:24:06,440 --> 00:24:08,240 | el dinero, compañero? Esto | prev=244.77s | next=127.96s | conf=0.87
+  00:29:36,940 --> 00:29:38,180 | Los sapos hablaron. | prev=134.66s | next=3.20s | conf=0.88
+  00:29:58,360 --> 00:30:00,100 | Esto es lo que te va a ayudar. | prev=8.02s | next=14.15s | conf=1.00
+  00:35:14,570 --> 00:35:15,570 | ¿Y eso qué significa? | prev=19.84s | next=8.19s | conf=0.99
+  00:35:33,450 --> 00:35:37,940 | Señorita. ¿Y ustedes qué cosa creen que van a encontrar? | prev=3.34s | next=21.18s | conf=0.93
+  00:35:59,120 --> 00:36:02,520 | En las noches, allá, la luz sale de abajo. | prev=21.18s | next=63.92s | conf=0.93
+  00:41:37,440 --> 00:41:38,960 | Encontré el tesoro, carajo. | prev=242.70s | next=3.62s | conf=1.00
+  00:41:42,580 --> 00:41:44,080 | Encontré el tesoro, carajo. | prev=3.62s | next=14.91s | conf=0.98
+  00:41:58,990 --> 00:42:00,130 | Llegué el maldito inspector. | prev=14.91s | next=195.85s | conf=0.90
+  00:45:15,980 --> 00:45:16,980 | ¿Janet? | prev=195.85s | next=262.34s | conf=0.73
+  00:49:39,320 --> 00:49:42,280 | Tardes. Buenas tardes. Adelante. | prev=262.34s | next=7.76s | conf=0.94
+  00:49:50,040 --> 00:49:52,340 | Quería saber si le interesa comprar esto. | prev=7.76s | next=10.96s | conf=0.99
+  00:50:03,300 --> 00:50:06,100 | Yo tenía uno así cuando era joven en mi pueblo. | prev=10.96s | next=6.24s | conf=0.95
+  00:50:12,340 --> 00:50:18,000 | ¿Cuánto quieres por él? Doscientos. | prev=6.24s | next=4.06s | conf=0.95
+  00:50:22,060 --> 00:50:28,060 | Te doy cincuenta soles. Cien. | prev=4.06s | next=4.31s | conf=0.99
+  00:50:32,370 --> 00:50:35,410 | Cincuenta soles, ni un centavo más y decidí rápido que ya cerré. | prev=4.31s | next=20.77s | conf=0.97
+  00:52:01,480 --> 00:52:03,940 | Parece que no nos estamos entendiendo. Anda, | prev=21.29s | next=24.74s | conf=0.87
+  00:52:28,680 --> 00:52:31,260 | fuma tranquilo. | prev=24.74s | next=103.04s | conf=0.79
+  00:54:14,300 --> 00:54:16,860 | Tú hiciste esto. Tú hiciste esto. | prev=103.04s | next=4.20s | conf=0.91
+  00:55:39,160 --> 00:55:40,980 | Quiero esos millones Te | prev=21.46s | next=8.67s | conf=0.73
+  00:56:19,780 --> 00:56:21,980 | Te voy a dar tu coquita Tu | prev=25.59s | next=8.07s | conf=0.92
+  00:56:30,050 --> 00:56:35,270 | cigarrito Todos los días Esta | prev=8.07s | next=3.49s | conf=1.00
+  00:58:14,650 --> 00:58:18,170 | Y el primer número es... ¡Ocho! | prev=11.41s | next=15.38s | conf=0.91
+  00:58:33,550 --> 00:58:35,290 | Vamos por el segundo 22 | prev=15.38s | next=7.07s | conf=0.66
+  00:59:03,060 --> 00:59:04,060 | 41 | prev=11.91s | next=4.42s | conf=0.79
+  00:59:32,340 --> 00:59:34,460 | a ver cuál es | prev=9.66s | next=35.33s | conf=0.96
+  01:00:09,790 --> 01:00:12,840 | Justo ahora Están hueveando | prev=35.33s | next=4.88s | conf=0.84
+  01:00:17,720 --> 01:00:21,460 | Llegó el momento de conocer el último número | prev=4.88s | next=8.38s | conf=0.86
+  01:00:29,840 --> 01:00:32,180 | No tienes el carrito, te consigo uno ¡El | prev=8.38s | next=4.23s | conf=0.71
+  01:00:36,410 --> 01:00:38,010 | último número! | prev=4.23s | next=20.04s | conf=0.94
+  01:04:21,000 --> 01:04:22,000 | cierre, esos | prev=6.78s | next=61.73s | conf=0.93
+  01:05:23,730 --> 01:05:25,370 | millones, te | prev=61.73s | next=10.95s | conf=1.00
+  01:06:00,880 --> 01:06:02,740 | Aquí te traigo unos regalitos, Taita. | prev=18.86s | next=7.27s | conf=0.96
+  01:06:10,010 --> 01:06:14,920 | Espero que la cosecha del próximo año sea mejor que esta. | prev=7.27s | next=11.14s | conf=0.99
+  01:08:28,520 --> 01:08:29,720 | No nos | prev=6.47s | next=17.02s | conf=0.88
+  01:09:01,950 --> 01:09:03,190 | ¿Qué es lo que está pasando? | prev=5.41s | next=5.01s | conf=1.00
+  01:09:20,980 --> 01:09:22,680 | Tienes razón, Sarín, la | prev=3.17s | next=5.64s | conf=0.88
+  01:09:28,320 --> 01:09:29,820 | familia es más importante. | prev=5.64s | next=96.14s | conf=1.00
+  01:11:05,960 --> 01:11:09,120 | Tranquilízate. ¿Por qué dices eso? | prev=96.14s | next=93.69s | conf=0.96
+  01:12:42,810 --> 01:12:43,990 | No esté fastidiando. | prev=93.69s | next=42.26s | conf=0.79
+  01:13:26,250 --> 01:13:29,030 | Taita, extraña a mi papá. | prev=42.26s | next=8.85s | conf=0.91
+  01:14:29,980 --> 01:14:31,760 | Ellos mataron a mi Carmelo. | prev=44.90s | next=8.69s | conf=0.98
+  01:18:33,000 --> 01:18:34,000 | Tú | prev=81.23s | next=5.62s | conf=0.77
+  01:18:48,230 --> 01:18:50,110 | te traigo unos regalitos, Taita | prev=3.55s | next=12.49s | conf=0.96
+  01:19:43,860 --> 01:19:47,660 | Carmelo merece venganza. | prev=34.96s | next=164.07s | conf=0.91
+  01:22:31,730 --> 01:22:32,730 | Buen día, | prev=164.07s | next=6.72s | conf=0.75
+  01:22:39,450 --> 01:22:43,010 | me | prev=6.72s | next=18.05s | conf=0.98
+  01:23:31,940 --> 01:23:32,940 | Mamá, | prev=6.66s | next=6.76s | conf=1.00
+  01:23:39,700 --> 01:23:40,700 | ¿cómo estás? | prev=6.76s | next=12.77s | conf=1.00
+  01:23:53,470 --> 01:23:54,470 | Ya está | prev=12.77s | next=30.95s | conf=1.00
+  01:24:25,420 --> 01:24:31,080 | Tuvieron lo que se merecían Lo que le hicieron a papá Dios | prev=30.95s | next=7.75s | conf=0.95
+  01:24:38,830 --> 01:24:39,830 | mío | prev=7.75s | next=17.19s | conf=1.00
