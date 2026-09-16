@@ -45,15 +45,16 @@ Si ves el cartel amarillo, los subtítulos que estás revisando son inventados: 
 - **Editar**: el texto de cada segmento es `contenteditable`. Al escribir, el segmento se marca como *revisado*.
   Todo se guarda en `localStorage` (clave `subtitulado-review-v1`) y se restaura al recargar.
 - **Editar tiempos**: cada segmento muestra sus timestamps; **click en uno de ellos** lo convierte en
-  campo editable (Enter o blur confirma, `Esc` cancela). Acepta `00:01:23,450`, `1:23`, `83.5`…
+  campo editable (Enter o blur confirma, `Esc` cancela; el valor aparece tal cual, sin seleccionar,
+  con el cursor donde hiciste el clic — `Cmd/Ctrl+A` selecciona todo). Acepta `00:01:23,450`,
+  `1:23`, `83.5`…
   A cada lado hay botones **−/+ de 100 ms** (visibles al pasar el ratón por el segmento; mantener
-  pulsado repite el ajuste) que no mueven el audio. El botón **↺ revertir tiempos** (aparece solo si
+  pulsado repite el ajuste) que no mueven el audio. Y al pasar el ratón sobre un timestamp aparece
+  bajo él una **perilla de arrastre**: desplaza ese `start` o `end` ±2 s desde el valor que tenía
+  al empezar, con paso de 10 ms; el timestamp se actualiza en vivo mientras arrastras, al soltar
+  queda donde lo dejaste y la perilla desaparece. Cada arrastre completo cuenta como un solo cambio
+  (una sola entrada de deshacer). El botón **↺ revertir tiempos** (aparece solo si
   has tocado los tiempos) devuelve `start`/`end` a los valores del JSON original.
-- **Marcar con el cursor («Inicio aquí» / «Fin aquí»)**: botones en cada segmento (y atajos `I`/`O`
-  sobre el segmento activo) que fijan su `start`/`end` al instante **REAL del audio** en ese momento.
-  Lo que se guarda es `currentTime − offset` (tiempo de subtítulo), de modo que al exportar con el
-  offset aplicado el timestamp cae exactamente donde marcaste: con offset +300 ms y el audio en
-  1234,5 s, se guarda 1234,2 s y el SRT exporta `00:20:34,500`.
 - **Insertar**: **+ Insertar aquí** (barra superior) crea un subtítulo vacío de 2 s en la posición
   actual del audio, colocado en su sitio por orden temporal; se edita texto y tiempos como cualquier
   otro (se exporta como texto plano, sin colores por palabra).
@@ -107,6 +108,21 @@ constante entre el audio y los subtítulos:
   que muestra ya los tiempos con el offset, como en el SRT descargado).
 - `,` y `.` lo mueven de 50 en 50 ms sin soltar el teclado, y **reset** lo devuelve a 0.
 
+### Jog del audio (barra superior)
+
+Junto al reproductor hay un control para moverse por el audio con precisión, porque la barra
+nativa del `<audio>` es inútil para ajustar décimas en una película larga:
+
+- **Deslizante de jog**: centrado en 0, de −5 s a +5 s con paso de 0,05 s. Al arrastrar, el audio
+  se desplaza ESA cantidad **respecto a la posición que tenía al empezar el arrastre** (comportamiento
+  de jog: empujas, escuchas, sueltas); al soltar, el mando vuelve al centro y la posición alcanzada
+  se queda fija. Puedes arrastrar varias veces seguidas para acumular.
+- **Botones discretos** a cada lado del deslizante: −1 s, −0,5 s, −0,1 s, +0,1 s, +0,5 s y +1 s;
+  funcionan con el audio en marcha y en pausa.
+- **Lectura de la posición** `HH:MM:SS,mmm` al lado, actualizada en vivo, para saber exactamente
+  dónde estás.
+- Mueve la reproducción del audio, NO los subtítulos (para eso está la perilla de cada timestamp).
+
 ### Atajos de teclado
 
 | tecla | acción |
@@ -115,10 +131,32 @@ constante entre el audio y los subtítulos:
 | `J` | segmento siguiente |
 | `K` | segmento anterior |
 | `R` | marcar / desmarcar revisado |
-| `I` | «Inicio aquí»: fijar el `start` del segmento activo al instante actual del audio |
-| `O` | «Fin aquí»: fijar el `end` del segmento activo al instante actual del audio |
 | `,` | offset −50 ms |
 | `.` | offset +50 ms |
+| `←` / `→` | mover el audio −0,1 s / +0,1 s |
+| `Shift`+`←` / `Shift`+`→` | mover el audio −1 s / +1 s |
+| `Cmd/Ctrl`+`Z` | deshacer |
+| `Shift`+`Cmd/Ctrl`+`Z` / `Ctrl`+`Y` | rehacer |
+
+### Deshacer / Rehacer
+
+Los botones **↶ Deshacer** y **↷ Rehacer** (barra superior) cubren TODAS las acciones que
+modifican datos: editar texto, editar tiempos (escritos, perilla y ±100 ms), insertar, borrar,
+restaurar, revertir tiempos, marcar/desmarcar revisado y cambiar el offset global.
+
+- Deshabilitados cuando no hay nada que deshacer/rehacer; el tooltip dice QUÉ se va a
+  deshacer/rehacer («editar texto del #42», «borrar #17», «insertar»…).
+- Atajos: `Cmd/Ctrl+Z` deshacer, `Shift+Cmd/Ctrl+Z` y `Ctrl+Y` rehacer. Con el foco dentro de un
+  campo de texto o de tiempo, `Cmd/Ctrl+Z` lo lleva el navegador (deshace la escritura del campo),
+  no la pila.
+- La escritura de texto se agrupa: teclear una frase genera UNA sola entrada (pausa de ~600 ms
+  o perder el foco la cierra). Igual los ajustes de ±100 ms repetidos y el offset. Cada arrastre
+  de la perilla es una sola entrada.
+- Implementación: pila de instantáneas del estado persistible (textos, tiempos, revisados,
+  borrados, insertados y offset), limitada a ~100 entradas; la pila de rehacer se vacía al
+  ejecutar una acción nueva. La pila vive en MEMORIA: **no sobrevive a recargar la página**
+  (lo que persiste es `localStorage`, que cada acción ya guarda por su cuenta). Tras deshacer o
+  rehacer se reordena la lista por tiempo, se repinta, se recalculan los contadores y se guarda.
 
 Los atajos se desactivan mientras el foco está dentro de un texto en edición o del campo de
 búsqueda (en el texto, `Esc` para salir). Así puedes escribir espacios y `j`/`k`/`r` sin que

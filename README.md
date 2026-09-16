@@ -111,8 +111,8 @@ mlx-whisper es ~7× más rápido, pero se descartó por calidad: fabrica 20 aluc
 `review/` contiene una interfaz local para **revisar los subtítulos escuchando el audio**: colorea
 cada palabra según la confianza del transcriptor, sigue la reproducción en vivo, permite corregir
 texto y tiempos, insertar y borrar subtítulos, y exportar el SRT definitivo. Además del texto, cada
-subtítulo tiene edición de inicio/fin (escritura directa, ajuste fino de ±100 ms y marcado con el
-cursor del audio: «Inicio aquí»/«Fin aquí», atajos `I`/`O`), los borrados son restaurables, y la
+subtítulo tiene edición de inicio/fin (escritura directa y ajuste fino de ±100 ms), los borrados
+son restaurables, y la
 interfaz marca los problemas de tiempo (solapes, duración fuera de 1-6 s, >21 cps). Los tramos a
 mirar están marcados en `out/resync_report.txt` (descartados, aislados conservados, palabras con
 confianza < 0.6). No abras `review/index.html` directamente (sin servidor falla el `fetch` de

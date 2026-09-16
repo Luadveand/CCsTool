@@ -146,7 +146,7 @@ body {
 
 .seg {
   display: flex;
-  gap: 12px;
+  position: relative;          /* ancla del .jog: coordenadas dentro del segmento */
   padding: 8px 10px;
   margin-bottom: 6px;
   background: var(--bg-row);
@@ -161,6 +161,7 @@ body {
   border-left-color: var(--accent);
   box-shadow: 0 0 0 1px rgba(74, 158, 255, .25);
 }
+#jogSlider { width: 130px; accent-color: var(--accent); }
 .seg.reviewed .seg-head { opacity: .75; }
 .seg.dud { border-left-color: #a5502f; }
 .seg.active.dud { border-left-color: var(--accent); }
@@ -241,6 +242,22 @@ body {
   line-height: 1.3;
   touch-action: none;
 }
+/* ---- perilla fina (.jog): una sola, creada al vuelo bajo el .tsv al pasar el
+   ratón; overlay absoluto para no alterar el layout (el render no la crea) */
+.jog {
+  position: absolute;
+  width: 88px;
+  height: 14px;
+  z-index: 5;
+  accent-color: var(--accent);
+  cursor: ew-resize;
+  background: rgba(18, 20, 24, .92);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0 2px;
+  touch-action: none;
+}
+
 .flag-time { color: var(--red-fg); cursor: help; }
 .flag-ins { color: var(--accent); font-weight: 700; }
 .flag-del { color: var(--red-fg); font-weight: 700; }

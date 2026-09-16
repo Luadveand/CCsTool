@@ -32,6 +32,19 @@
   </div>
 
   <div class="group">
+    <label class="lab">Jog</label>
+    <button class="btn sq" data-jog="-1" title="−1 s">−1</button>
+    <button class="btn sq" data-jog="-0.5" title="−0,5 s">−.5</button>
+    <button class="btn sq" data-jog="-0.1" title="−0,1 s">−.1</button>
+    <input id="jogSlider" type="range" min="-5" max="5" step="0.05" value="0" aria-label="Jog del audio"
+           title="Empuja y suelta: mueve el audio respecto a la posición que tenía al empezar a arrastrar (±5 s)">
+    <button class="btn sq" data-jog="0.1" title="+0,1 s">+.1</button>
+    <button class="btn sq" data-jog="0.5" title="+0,5 s">+.5</button>
+    <button class="btn sq" data-jog="1" title="+1 s">+1</button>
+    <span id="audioPos" class="badge mono" title="Posición actual del audio (HH:MM:SS,mmm)">00:00:00,000</span>
+  </div>
+
+  <div class="group">
     <label class="btn file" for="fileInput">Cargar words.json…</label>
     <input id="fileInput" type="file" accept=".json,application/json" hidden>
     <button id="discard" class="btn danger">Descartar cambios guardados</button>
@@ -63,6 +76,11 @@
   </div>
 
   <div class="group">
+    <button id="undoBtn" class="btn" title="Nada que deshacer">↶ Deshacer</button>
+    <button id="redoBtn" class="btn" title="Nada que rehacer">↷ Rehacer</button>
+  </div>
+
+  <div class="group">
     <button id="insertHere" class="btn" title="Subtítulo nuevo y vacío en la posición actual del audio (2 s)">+ Insertar aquí</button>
     <button id="expSrt" class="btn primary">Exportar TRANSCRIPT_revisado.srt</button>
     <button id="expJson" class="btn">Exportar correcciones .json</button>
@@ -76,11 +94,12 @@
   <span class="k"><kbd>J</kbd> siguiente</span>
   <span class="k"><kbd>K</kbd> anterior</span>
   <span class="k"><kbd>R</kbd> revisado on/off</span>
+  <span class="k"><kbd>Cmd/Ctrl</kbd>+<kbd>Z</kbd> deshacer · <kbd>Shift</kbd>+ deshacer → rehacer</span>
   <span class="k"><kbd>,</kbd> offset −50 ms</span>
-  <span class="k"><kbd>I</kbd> inicio aquí (marca el start al instante actual)</span>
-  <span class="k"><kbd>O</kbd> fin aquí (marca el end al instante actual)</span>
   <span class="k muted">Los borrados se pueden restaurar en el filtro «Borrados».</span>
   <span class="k"><kbd>.</kbd> offset +50 ms</span>
+  <span class="k"><kbd>←</kbd>/<kbd>→</kbd> mover el audio −0,1 / +0,1 s</span>
+  <span class="k"><kbd>Shift</kbd>+<kbd>←</kbd>/<kbd>→</kbd> −1 / +1 s</span>
   <span class="k legend-normal">p ≥ 0.85</span>
   <span class="k legend-amber">0.60 ≤ p &lt; 0.85</span>
   <span class="k legend-red">p &lt; 0.60</span>

@@ -13,6 +13,7 @@ const bannerEl = document.getElementById('banner');
 const offsetEl = document.getElementById('offset');
 const offNowEl = document.getElementById('offNow');
 const srcNameEl= document.getElementById('srcName');
+const audioPosEl = document.getElementById('audioPos');
 const srcInfoEl= document.getElementById('srcInfo');
 const cRevEl   = document.getElementById('cRev');
 const cDudEl   = document.getElementById('cDud');
@@ -123,11 +124,12 @@ const eqT = (a, b) => Math.abs(a - b) < 1e-6;
 
 /* Fija start o end (en la línea temporal de los SUBTÍTULOS, sin offset),
    reordena la lista y repinta. Devuelve true si cambió algo. */
-function setSegTime(seg, which, t) {
+function setSegTime(seg, which, t, desc, grouped) {
   if (!seg || !isFinite(t)) return false;
   t = clampT(t);
   const before = which === 'start' ? seg.start : seg.end;
   if (eqT(before, t)) return false;
+  if (desc) pushUndo(desc, grouped);          // snapshot ANTES del cambio real
   if (which === 'start') seg.start = t; else seg.end = t;
   if (eqT(seg.start, seg.start0) && eqT(seg.end, seg.end0)) delete state.timeEdits[seg.id];
   else state.timeEdits[seg.id] = { start: seg.start, end: seg.end };
@@ -147,22 +149,15 @@ function nudge(id, act) {
   if (!seg) return;
   const which = act.charAt(0) === 's' ? 'start' : 'end';
   const cur = which === 'start' ? seg.start : seg.end;
-  setSegTime(seg, which, cur + (act.charAt(act.length - 1) === '-' ? -0.1 : 0.1));
-}
-
-/* «Inicio aquí» / «Fin aquí»: se marca el instante REAL del audio, así que el
-   tiempo guardado es currentTime - offset; al exportar se vuelve a sumar el
-   offset y el resultado cae exactamente donde el usuario lo marcó. */
-function markHere(id, which) {
-  const seg = segById(id);
-  if (!seg) return;
-  setSegTime(seg, which, clampT(audio.currentTime - off()));
+  setSegTime(seg, which, cur + (act.charAt(act.length - 1) === '-' ? -0.1 : 0.1),
+             'ajuste fino del #' + seg.id, true);
 }
 
 /* Revertir los tiempos de un segmento a los originales del JSON. */
 function revertTimes(id) {
   const seg = segById(id);
   if (!seg) return;
+  pushUndo('revertir tiempos del #' + seg.id);
   seg.start = seg.start0;
   seg.end = seg.end0;
   delete state.timeEdits[seg.id];
@@ -179,6 +174,7 @@ function deleteSeg(id) {
   if (!seg || seg.deleted) return;
   const n = state.segs.filter(s => s.deleted).length;
   if (!confirm('¿Borrar el subtítulo #' + seg.id + '?\n\nEl borrado persiste al recargar y se puede deshacer desde el filtro «Borrados».')) return;
+  pushUndo('borrar #' + seg.id);
   seg.deleted = true;
   state.deleted.add(String(id));
   if (state.activeId === seg.id) state.activeId = null;
@@ -191,6 +187,7 @@ function deleteSeg(id) {
 function restoreSeg(id) {
   const seg = segById(id);
   if (!seg || !seg.deleted) return;
+  pushUndo('restaurar #' + seg.id);
   seg.deleted = false;
   state.deleted.delete(String(id));
   save();
@@ -221,6 +218,7 @@ function makeInsert(spec) {
 
 /* «+ Insertar aquí»: subtitular en la posición actual del audio (2 s). */
 function insertHere() {
+  pushUndo('insertar');
   const t = clampT(audio.currentTime - off());
   const seg = makeInsert({ start: t, end: t + 2, text: '' });
   state.segs.push(seg);
@@ -268,6 +266,7 @@ function normalize(raw) {
 
 function applyData(raw, srcLabel) {
   state.segs = normalize(raw);
+  state.origSegs = state.segs.map(s => Object.assign({}, s));   // base para deshacer/rehacer
   state.src = srcLabel;
   state.duration = Number(raw && raw.duration) || null;
   state.activeId = null;
@@ -308,6 +307,12 @@ async function boot() {
 /* ---------------------------------------------------------- persistencia */
 
 function save() {
+  const dbgBox = document.getElementById('__dbgSaveTrace') ||
+    (() => { const b = document.createElement('pre'); b.id = '__dbgSaveTrace';
+            b.style.display = 'none'; document.body.appendChild(b); return b; })();
+  dbgBox.textContent += 'CALL ' + JSON.stringify({ t: Math.round(performance.now()),
+    timeEdits: JSON.stringify(state.timeEdits),
+    stack: (new Error().stack || '').split('\n').slice(2, 6).join(' | ') }) + '\n';
   clearTimeout(state.saveTimer);
   state.saveTimer = setTimeout(() => {
     try {
@@ -324,14 +329,23 @@ function save() {
 }
 
 function restore() {
+  let raw = null;
+  try { raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) { raw = null; }
+  applyRaw(raw);
+}
+
+/* Aplica overlays (edits, timeEdits, deleted, inserts, reviewed, offset) sobre
+   la lista BASE recién reconstruida. La usan el arranque y deshacer/rehacer. */
+function applyRaw(raw) {
+  // la base es la lista normalizada del fichero: los inserts se recrean y los
+  // tiempos/textos/borrados se aplican encima, así que es re-ejecutable
+  if (state.origSegs) state.segs = state.origSegs.map(s => Object.assign({}, s));
   state.edits = {};
   state.timeEdits = {};
   state.reviewed = new Set();
   state.offsetMs = 0;
   state.deleted = new Set();
   state.inserts = [];
-  let raw = null;
-  try { raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) { raw = null; }
   if (raw && typeof raw === 'object') {
     // 1) borrados e insertados primero: los edits/reviewed de un insertado
     //    solo se pueden aplicar cuando el segmento ya existe.
@@ -351,7 +365,10 @@ function restore() {
     }
     if (raw.edits && typeof raw.edits === 'object') {
       for (const s of state.segs) {
-        if (typeof raw.edits[s.id] === 'string') state.edits[s.id] = raw.edits[s.id];
+        if (typeof raw.edits[s.id] === 'string') {
+          state.edits[s.id] = raw.edits[s.id];
+          s.fold = fold(raw.edits[s.id]);   // la búsqueda debe ver el texto editado
+        }
       }
       // ediciones huérfanas (de otro fichero) no se conservan
     }
@@ -374,6 +391,74 @@ function restore() {
   resortSegs();
   offsetEl.value = state.offsetMs;
   offNowEl.textContent = (state.offsetMs > 0 ? '+' : '') + state.offsetMs + ' ms';
+}
+
+/* ---- deshacer / rehacer: pila de instantáneas del estado persistible.
+   En MEMORIA: no sobrevive a recargar la página (lo persistente es
+   localStorage, que cada acción ya guarda por su cuenta). */
+
+const UNDO_LIMIT = 100;
+let undoStack = [], redoStack = [];
+let undoGroup = null;      // agrupa acciones continuas: texto, nudges, offset
+
+function snapshot() {
+  return {
+    edits: Object.assign({}, state.edits),
+    timeEdits: JSON.parse(JSON.stringify(state.timeEdits)),
+    reviewed: [...state.reviewed],
+    offsetMs: state.offsetMs,
+    deleted: [...state.deleted],
+    inserts: state.inserts.map(s => ({ id: s.id, start: s.start, end: s.end, text: s.text })),
+  };
+}
+
+/* desc agrupa: si la misma acción continua (misma descripción) sigue activa
+   dentro de 600 ms, el primer snapshot de la serie ya sirve para todas. */
+function pushUndo(desc, grouped) {
+  if (grouped && undoGroup && undoGroup.desc === desc && Date.now() - undoGroup.t < 600) {
+    undoGroup.t = Date.now();
+    return;
+  }
+  undoGroup = grouped ? { desc, t: Date.now() } : null;
+  undoStack.push({ desc, snap: snapshot() });
+  if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+  redoStack = [];
+  updateUndoUI();
+}
+
+function undo() {
+  if (!undoStack.length) return;
+  undoGroup = null;
+  const entry = undoStack.pop();
+  redoStack.push({ desc: entry.desc, snap: snapshot() });
+  applySnapshot(entry.snap);
+  banner('Deshecho: ' + entry.desc);
+}
+
+function redo() {
+  if (!redoStack.length) return;
+  undoGroup = null;
+  const entry = redoStack.pop();
+  undoStack.push({ desc: entry.desc, snap: snapshot() });
+  if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+  applySnapshot(entry.snap);
+  banner('Rehecho: ' + entry.desc);
+}
+
+function applySnapshot(snap) {
+  applyRaw(snap);
+  save();                          // el estado restaurado vuelve a persistir
+  updateCounters();
+  render(true);
+  updateUndoUI();
+}
+
+function updateUndoUI() {
+  if (!undoBtn || !redoBtn) return;
+  undoBtn.disabled = !undoStack.length;
+  undoBtn.title = undoStack.length ? 'Deshacer: ' + undoStack[undoStack.length - 1].desc + '  (Cmd/Ctrl+Z)' : 'Nada que deshacer';
+  redoBtn.disabled = !redoStack.length;
+  redoBtn.title = redoStack.length ? 'Rehacer: ' + redoStack[redoStack.length - 1].desc + '  (Shift+Cmd/Ctrl+Z)' : 'Nada que rehacer';
 }
 
 /* ------------------------------------------------------------- render */
@@ -453,14 +538,12 @@ function render(keepScroll) {
             body + '</div>' +
         '</div>' +
         '<div class="seg-actions">' +
-          '<button class="btn aux" data-act="set-ini" title="Fijar inicio al instante actual (I)">Inicio aquí</button>' +
           (state.timeEdits[s.id]
             ? '<button class="btn aux" data-act="revert" title="Devolver start/end a los valores del JSON">↺ revertir tiempos</button>'
             : '') +
           (s.deleted
             ? '<button class="btn" data-act="restore" title="Deshacer el borrado">Restaurar</button>'
             : '<button class="btn aux danger" data-act="del" title="Borrar este subtítulo">borrar</button>') +
-          '<button class="btn aux" data-act="set-fin" title="Fijar fin al instante actual (O)">Fin aquí</button>' +
         '</div>' +
       '</article>';
     });
@@ -478,7 +561,6 @@ function render(keepScroll) {
   updateCounters();
   state.lastRenderMs = performance.now() - t0;
 }
-
 
 /* ---------- integridad temporal (visible, no bloquea la edición) ---------- */
 
@@ -571,6 +653,7 @@ function showSegment(id) {
 function toggleReviewed(id) {
   if (id == null) return;
   const k = String(id);
+  pushUndo('marcar/desmarcar revisado del #' + k);
   if (state.reviewed.has(k)) state.reviewed.delete(k); else state.reviewed.add(k);
   save();
   render(true);
@@ -592,7 +675,7 @@ function editingNow() {
 
 /* --------------------------------------------- seguimiento en vivo (rAF) */
 
-let lastActive = undefined, lastWord = undefined, lastWordEl = null;
+let lastActive = undefined, lastWord = undefined, lastWordEl = null, lastPosTxt = null;
 
 function tick() {
   requestAnimationFrame(tick);
@@ -623,6 +706,13 @@ function tick() {
     }
     lastActive = act;
     lastWord = undefined;
+  }
+
+  // lectura de la posición del audio con milisegundos (barato: solo al cambiar)
+  const posTxt = fmtTime(t);
+  if (posTxt !== lastPosTxt) {
+    audioPosEl.textContent = posTxt;
+    lastPosTxt = posTxt;
   }
 
   // subrayado de la palabra que suena
@@ -668,6 +758,7 @@ function setFilter(f) {
 
 function setOffset(ms, fromInput) {
   const v = Math.max(-5000, Math.min(5000, Math.round(Number(ms) || 0)));
+  if (v !== state.offsetMs) pushUndo('cambiar el offset global', true);
   state.offsetMs = v;
   if (!fromInput) offsetEl.value = v;
   offNowEl.textContent = (v > 0 ? '+' : '') + v + ' ms';
@@ -738,6 +829,7 @@ function buildCorrections() {
 /* --------------------------------------------------------------- eventos */
 
 listEl.addEventListener('click', e => {
+  if (jogEndedJust) { jogEndedJust = false; return; }   // click fantasma tras soltar la perilla
   if (e.target && e.target.id === 'clearSearch') { setQuery(''); return; }
   const act = e.target.closest('[data-act]');
   if (act) {
@@ -746,8 +838,6 @@ listEl.addEventListener('click', e => {
     if (!seg) return;
     if (act.dataset.act === 'play') playSeg(seg.dataset.id);
     else if (act.dataset.act === 'rev') toggleReviewed(seg.dataset.id);
-    else if (act.dataset.act === 'set-ini') markHere(seg.dataset.id, 'start');
-    else if (act.dataset.act === 'set-fin') markHere(seg.dataset.id, 'end');
     else if (act.dataset.act === 'del') deleteSeg(seg.dataset.id);
     else if (act.dataset.act === 'revert') revertTimes(seg.dataset.id);
     else if (act.dataset.act === 'restore') restoreSeg(seg.dataset.id);
@@ -761,10 +851,12 @@ listEl.addEventListener('click', e => {
       const inp = document.createElement('input');
       inp.className = 'tin';
       inp.dataset.t = tsv.dataset.t;
-      inp.value = tinDisplay(seg, tsv.dataset.t);
+      const val = tinDisplay(seg, tsv.dataset.t);
+      const caret = caretForClick(tsv, val, e.clientX);  // medir ANTES de quitar el span
+      inp.value = val;
       tsv.replaceWith(inp);
       inp.focus();
-      inp.select();
+      inp.setSelectionRange(caret, caret);
     }
     return;
   }
@@ -779,8 +871,10 @@ listEl.addEventListener('click', e => {
     return;
   }
   const seg = e.target.closest('.seg');
-  if (seg && !e.target.closest('.tin')) playSeg(seg.dataset.id);  // click en el segmento -> start + play
-  // (dentro de un campo de tiempo no se salta de sitio: hay que poder editar sin perder el audio)
+  if (seg && !e.target.closest('.tin') && !e.target.closest('.jog'))
+    playSeg(seg.dataset.id);  // click en el segmento -> start + play
+  // (dentro de un campo de tiempo o de la perilla no se salta de sitio: hay que
+  //  poder editar y arrastrar sin perder el audio)
 });
 
 listEl.addEventListener('input', e => {
@@ -789,6 +883,8 @@ listEl.addEventListener('input', e => {
   const seg = box.closest('.seg');
   if (!seg) return;
   const id = segById(seg.dataset.id).id;
+  // snapshot antes de registrar la tecla: agrupa la frase en UNA entrada
+  pushUndo('editar texto del #' + id, true);
   const txt = box.textContent.replace(/\u00a0/g, ' ');
   state.edits[id] = txt;
   const cur = segById(seg.dataset.id);
@@ -811,6 +907,14 @@ listEl.addEventListener('input', e => {
 function tinDisplay(seg, which) {
   return fmtTime(clampT((which === 'start' ? seg.start : seg.end) + off()));
 }
+/* Posición del cursor al abrir un .tin: fracción del clic dentro del .tsv
+   aplicada a la anchura del valor. Span e input usan la misma pila mono a 11px,
+   así que el reparto proporcional es exacto; span invisible -> final del valor. */
+function caretForClick(span, val, clientX) {
+  const r = span.getBoundingClientRect();
+  const frac = r.width ? Math.min(1, Math.max(0, (clientX - r.left) / r.width)) : 1;
+  return Math.min(val.length, Math.max(0, Math.round(frac * val.length)));
+}
 
 function commitTimeInput(tin) {
   const segEl = tin.closest('.seg');
@@ -829,23 +933,34 @@ function commitTimeInput(tin) {
     return;
   }
   // el usuario escribe en tiempo CON offset (lo que ve); se guarda SIN offset
-  if (!setSegTime(seg, which, v - off())) render(true);  // sin cambio: recupera el span
+  if (!setSegTime(seg, which, v - off(), 'editar tiempo del #' + seg.id))
+    render(true);  // sin cambio: recupera el span
 }
 
 listEl.addEventListener('change', e => {
   const tin = e.target.closest && e.target.closest('.tin');
-  if (tin) commitTimeInput(tin);
+  if (tin) {
+    if (tin.dataset.cancel) { delete tin.dataset.cancel; return; }  // Escape ya restauró
+    commitTimeInput(tin);
+  }
 });
 
 listEl.addEventListener('keydown', e => {
   const tin = e.target.closest && e.target.closest('.tin');
   if (!tin) return;
-  if (e.key === 'Enter') { e.preventDefault(); tin.blur(); }   // blur dispara change
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    tin.blur();   // blur dispara change (si hay escritura) -> commit
+    if (tin.isConnected && !tin.classList.contains('bad'))
+      render(true);   // sin cambio que confirme: devolvemos el span igualmente
+  }
   else if (e.key === 'Escape') {
+    tin.dataset.cancel = '1';
     const segEl = tin.closest('.seg');
     const seg = segEl && segById(segEl.dataset.id);
     if (seg) tin.value = tinDisplay(seg, tin.dataset.t);
     tin.blur();
+    render(true);   // sin escritura previa no hay 'change': devolvemos el span a mano
   }
 });
 
@@ -879,6 +994,92 @@ listEl.addEventListener('pointerdown', e => {
   document.addEventListener('pointercancel', stop);
 });
 
+/* ---- perilla fina por timestamp (.jog): desliza ±2 s con resolución de 10 ms.
+   Se crea al pasar el ratón sobre un .tsv (overlay bajo el span, sin tocar el
+   layout) y se destruye al soltar o salir: el render nunca la crea. Mueve el
+   TIEMPO del subtítulo, no el audio, y no roba el foco. */
+
+let jogEl = null, jogSeg = null, jogWhich = null, jogBase = 0, jogDragging = false;
+
+function closeJog() {
+  if (jogEl) jogEl.remove();
+  jogEl = null;
+  jogSeg = null;
+  jogWhich = null;
+}
+
+function showJog(tsv) {
+  if (jogDragging) return;
+  const segEl = tsv.closest('.seg');
+  if (!segEl) return;
+  const key = segEl.dataset.id + ':' + tsv.dataset.t;
+  if (jogEl && jogEl.dataset.key === key) return;
+  const seg = segById(segEl.dataset.id);
+  if (!seg) return;
+  closeJog();
+  const inp = document.createElement('input');
+  inp.type = 'range';
+  inp.className = 'jog';
+  inp.min = '-2';
+  inp.max = '2';
+  inp.step = '0.01';
+  inp.value = '0';
+  inp.dataset.t = tsv.dataset.t;
+  inp.dataset.key = key;
+  inp.title = 'Perilla: arrastra para mover ' + (tsv.dataset.t === 'start' ? 'el inicio' : 'el fin') +
+              ' ±2 s con paso de 10 ms; el span de arriba muestra el valor en vivo';
+  segEl.appendChild(inp);
+  inp.style.left = tsv.offsetLeft + 'px';
+  inp.style.top = (tsv.offsetTop + tsv.offsetHeight - 1) + 'px';   // sin hueco bajo el span
+  jogEl = inp;
+  jogSeg = seg;
+  jogWhich = tsv.dataset.t;
+}
+
+let jogEndedJust = false;   // un click puede caer en el .seg al soltar: se suprime
+
+listEl.addEventListener('mouseover', e => {
+  const t = e.target;
+  if (jogEl && (t === jogEl || (t.closest && t.closest('.jog')))) return;
+  const tsv = t.closest && t.closest('.tsv');
+  if (tsv) { showJog(tsv); return; }
+  // dentro del mismo segmento (incluso el hueco bajo el span): la perilla sigue
+  if (jogEl && t.closest && t.closest('.seg') === jogEl.parentElement) return;
+  if (jogEl && !jogDragging) closeJog();
+});
+listEl.addEventListener('mouseleave', () => { if (jogEl && !jogDragging) closeJog(); });
+
+listEl.addEventListener('pointerdown', e => {
+  if (e.target !== jogEl) return;
+  e.preventDefault();                      // sin robar el foco ni seleccionar texto
+  jogDragging = true;
+  jogBase = jogWhich === 'start' ? jogSeg.start : jogSeg.end;
+  try { jogEl.setPointerCapture(e.pointerId); } catch (_) { /* sin captura: sigue igual */ }
+});
+
+listEl.addEventListener('pointermove', e => {
+  if (!jogDragging || !jogEl) return;
+  const r = jogEl.getBoundingClientRect();
+  const frac = r.width ? Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) : 0.5;
+  const rel = Math.round((frac * 4 - 2) * 100) / 100;          // ±2 s, paso 10 ms
+  jogEl.value = rel;
+  const span = document.querySelector('.seg[data-id="' + cssEsc(String(jogSeg.id)) +
+                                     '"] .tsv[data-t="' + jogWhich + '"]');
+  if (span) span.textContent = fmtTime(clampT(jogBase + rel + off()));  // en vivo, con offset
+});
+
+function endJogDrag() {
+  if (!jogDragging) return;
+  jogDragging = false;
+  jogEndedJust = true;
+  const rel = jogEl ? parseFloat(jogEl.value) : 0;
+  const seg = jogSeg, which = jogWhich, v = jogBase + rel;
+  closeJog();
+  setSegTime(seg, which, v, 'ajustar tiempo del #' + seg.id + ' (perilla)');
+}
+listEl.addEventListener('pointerup', endJogDrag);
+listEl.addEventListener('pointercancel', endJogDrag);
+
 document.addEventListener('keydown', e => {
   const a = document.activeElement;
   const editable = a && (a.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
@@ -886,16 +1087,27 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && a.blur) a.blur();
     return;
   }
-  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) {
+    // deshacer/rehacer solo con el foco FUERA de los campos: dentro de un
+    // campo, Cmd/Ctrl+Z lo lleva el navegador (deshacer la escritura)
+    if (!e.altKey && e.key.toLowerCase() === 'z') {
+      e.preventDefault();
+      if (e.shiftKey) redo(); else undo();
+    } else if (e.key.toLowerCase() === 'y' && e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      redo();
+    }
+    return;
+  }
   switch (e.key) {
     case ' ': case 'Spacebar': e.preventDefault(); togglePlay(); break;
     case 'j': case 'J':        e.preventDefault(); nav(1); break;   // vim: j = bajar = siguiente
     case 'k': case 'K':        e.preventDefault(); nav(-1); break;  // vim: k = subir = anterior
     case 'r': case 'R':        e.preventDefault(); toggleReviewed(currentId()); break;
-    case 'i': case 'I':        e.preventDefault(); markHere(currentId(), 'start'); break;
-    case 'o': case 'O':        e.preventDefault(); markHere(currentId(), 'end'); break;
     case ',':                  e.preventDefault(); setOffset(state.offsetMs - 50); break;
     case '.':                  e.preventDefault(); setOffset(state.offsetMs + 50); break;
+    case 'ArrowLeft':          e.preventDefault(); jogAudio(e.shiftKey ? -1 : -0.1); break;
+    case 'ArrowRight':         e.preventDefault(); jogAudio(e.shiftKey ? 1 : 0.1); break;
   }
 });
 
@@ -905,8 +1117,44 @@ document.getElementById('offMinus').addEventListener('click', () => setOffset(st
 document.getElementById('offPlus').addEventListener('click',  () => setOffset(state.offsetMs + 50));
 document.getElementById('offReset').addEventListener('click', () => setOffset(0));
 
-document.querySelectorAll('#filters .filt').forEach(b =>
-  b.addEventListener('click', () => setFilter(b.dataset.filter)));
+
+/* ---- jog del audio: deslizante relativo (−5..+5 s, respecto a la posición al
+   empezar a arrastrar; al soltar vuelve al centro) y botones discretos. Mueve
+   la reproducción, no los subtítulos; funciona en marcha y en pausa. */
+const jogSlider = document.getElementById('jogSlider') || null;
+const undoBtn = document.getElementById('undoBtn') || null;
+const redoBtn = document.getElementById('redoBtn') || null;
+let jogApplied = 0;      // último desplazamiento del slider ya aplicado al audio
+
+function clampAudio(t) {
+  const d = isFinite(audio.duration) ? audio.duration : Infinity;
+  return Math.min(d, Math.max(0, t));
+}
+
+function jogAudio(delta) {
+  audio.currentTime = clampAudio(audio.currentTime + delta);
+}
+
+function jogSeek() {
+  if (!jogSlider) return;
+  const rel = parseFloat(jogSlider.value);
+  audio.currentTime = clampAudio(audio.currentTime + (rel - jogApplied));
+  jogApplied = rel;
+}
+
+if (jogSlider) {
+  jogSlider.addEventListener('pointerdown', () => { jogApplied = parseFloat(jogSlider.value); });
+  jogSlider.addEventListener('input', jogSeek);   // arrastre: cada paso aplica su delta
+  jogSlider.addEventListener('change', () => { jogSlider.value = 0; jogApplied = 0; });
+}
+document.querySelectorAll('[data-jog]').forEach(b =>
+  b.addEventListener('click', () => jogAudio(parseFloat(b.dataset.jog))));
+
+/* ---- deshacer / rehacer: botones + Cmd/Ctrl+Z, Shift+Cmd/Ctrl+Z, Ctrl+Y ---- */
+if (undoBtn) undoBtn.addEventListener('click', undo);
+if (redoBtn) redoBtn.addEventListener('click', redo);
+updateUndoUI();
+
 
 /* --------------------------------------------------------------- búsqueda */
 
