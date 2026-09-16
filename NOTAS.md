@@ -164,10 +164,24 @@ conf=0.57) — recuperables subiendo `LOW_CONF` en `srt_tools.py`.
 
 `review/` contiene una página local (HTML + JS vanilla, sin build ni dependencias de red) para
 **revisar los subtítulos escuchando el audio**: colorea cada palabra según la confianza del
-transcriptor, sigue la reproducción en vivo, permite corregir el texto y exportar el SRT
-definitivo. Su papel en el pipeline: el humano escucha los tramos marcados de baja confianza y
-los aislados conservados (listados en `out/resync_report.txt`), corrige, y exporta el
-deliverable final. Detalles en `review/README.md`.
+transcriptor, sigue la reproducción en vivo, permite corregir texto y tiempos, insertar y borrar
+subtítulos, y exportar el SRT definitivo. Además del texto, cada subtítulo tiene edición de
+`start`/`end` (escritura directa en varios formatos, ajuste fino de ±100 ms y marcado con el cursor
+del audio: «Inicio aquí»/«Fin aquí», atajos `I`/`O`), los borrados se marcan (no se destruyen) y son
+restaurables desde el filtro «Borrados», y la interfaz señala los problemas de tiempo (solapes,
+duración fuera de 1-6 s, >21 cps). Su papel en el pipeline: el humano escucha los tramos marcados
+de baja confianza y los aislados conservados (listados en `out/resync_report.txt`), corrige, y
+exporta el deliverable final.
+
+**Semántica del offset frente a los tiempos por segmento** (lo único no obvio del diseño): todos
+los tiempos se guardan en la línea temporal de los SUBTÍTULOS, sin offset. Al marcar «Inicio aquí»
+o «Fin aquí» se toma el `currentTime` REAL del audio y se le RESTA el offset para guardarlo; al
+exportar el SRT el offset se vuelve a SUMAR, de modo que el timestamp cae exactamente donde el
+usuario lo marcó al escuchar. Lo mismo vale para los campos editados (se escriben en tiempo con
+offset, se guarda sin él) y para los ajustes de ±100 ms. La exportación avisa antes de descargar:
+subtítulos con `end ≤ start` (el SRT llevaría duración CERO, tal cual — no se inventa una
+duración), solapes y vivos con texto vacío (que no se exportarán); cancelar no descarga nada.
+Detalles de uso en `review/README.md`.
 
 ## Servidor de la interfaz de revisión (HTTP Range)
 

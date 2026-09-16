@@ -2,8 +2,8 @@
 
 Página local (HTML + JS vanilla, sin build y sin dependencias de red) para revisar
 los subtítulos escuchando el audio: colorea cada palabra según la confianza del
-transcriptor, sigue la reproducción en vivo, permite corregir el texto y exportar
-el SRT definitivo (con el desfase global aplicado) y el JSON de correcciones.
+transcriptor, sigue la reproducción en vivo, permite corregir texto y tiempos, insertar y borrar
+subtítulos, y exportar el SRT definitivo (con el desfase global aplicado) y el JSON de correcciones.
 
 ## Arrancarlo
 
@@ -44,14 +44,42 @@ Si ves el cartel amarillo, los subtítulos que estás revisando son inventados: 
   subtítulo, no se resalta nada (lo cual también es información: hay un hueco).
 - **Editar**: el texto de cada segmento es `contenteditable`. Al escribir, el segmento se marca como *revisado*.
   Todo se guarda en `localStorage` (clave `subtitulado-review-v1`) y se restaura al recargar.
-- **Filtros**: Todos / Solo dudosos (alguna palabra `p < 0.60`, o `no_speech_prob > 0.5`) / Sin revisar.
-  Los contadores muestran `revisados N / total M`, `dudosos K` y `visibles V`.
+- **Editar tiempos**: cada segmento muestra sus timestamps; **click en uno de ellos** lo convierte en
+  campo editable (Enter o blur confirma, `Esc` cancela). Acepta `00:01:23,450`, `1:23`, `83.5`…
+  A cada lado hay botones **−/+ de 100 ms** (visibles al pasar el ratón por el segmento; mantener
+  pulsado repite el ajuste) que no mueven el audio. El botón **↺ revertir tiempos** (aparece solo si
+  has tocado los tiempos) devuelve `start`/`end` a los valores del JSON original.
+- **Marcar con el cursor («Inicio aquí» / «Fin aquí»)**: botones en cada segmento (y atajos `I`/`O`
+  sobre el segmento activo) que fijan su `start`/`end` al instante **REAL del audio** en ese momento.
+  Lo que se guarda es `currentTime − offset` (tiempo de subtítulo), de modo que al exportar con el
+  offset aplicado el timestamp cae exactamente donde marcaste: con offset +300 ms y el audio en
+  1234,5 s, se guarda 1234,2 s y el SRT exporta `00:20:34,500`.
+- **Insertar**: **+ Insertar aquí** (barra superior) crea un subtítulo vacío de 2 s en la posición
+  actual del audio, colocado en su sitio por orden temporal; se edita texto y tiempos como cualquier
+  otro (se exporta como texto plano, sin colores por palabra).
+- **Borrar y restaurar**: el botón **borrar** de cada segmento lo saca de la lista, del SRT y del
+  conteo (con confirmación), pero no lo destruye: el filtro **Borrados** muestra los subtítulos
+  borrados atenuados, cada uno con su botón **Restaurar** que los devuelve a la lista, al SRT y al
+  contador de siempre. Tanto el borrado como la restauración persisten al recargar; el badge
+  «borrados N» aparece en la barra mientras haya alguno.
+- **Integridad temporal**: un segmento se marca como **con problemas de tiempo** si `end ≤ start`,
+  solapa con el anterior o el siguiente, dura menos de 1 s o más de 6 s, o su velocidad de lectura
+  supera 21 caracteres por segundo. La barra muestra el contador «N con problemas de tiempo» y el
+  filtro **Con problemas de tiempo** lista solo esos. Los contadores muestran también
+  `revisados N / total M`, `dudosos K`, `visibles V` y `borrados N`.
 - **Búsqueda**: el campo «Buscar texto…» filtra por subcadena ignorando mayúsculas y acentos, y se combina
   con el filtro activo (p. ej. «dudosos» + «dinero»). El badge `coinciden N` cuenta los segmentos que
   contienen el texto sin aplicar el filtro. `Enter` salta al primer resultado, `Esc` o `✕` limpian la búsqueda.
-- **Exportar**: `TRANSCRIPT_revisado.srt` (textos editados, timestamps + offset, índices renumerados desde 1)
-  y `correcciones.json` (solo los segmentos cambiados: `id`, `original`, `nuevo`).
-- **Descartar cambios guardados**: borra `localStorage` previa confirmación.
+- **Exportar**: `TRANSCRIPT_revisado.srt` usa los tiempos EDITADOS, aplica el offset global, excluye
+  los borrados, incluye los insertados, ordena por `start` y renumera desde 1. Antes de descargar
+  avisa de los problemas detectados — subtítulos con `end ≤ start` (el SRT llevaría duración CERO,
+  tal cual: no se inventa una duración), con solape, y vivos con texto vacío (que NO se exportarán).
+  Cancelar no descarga nada; aceptar exporta igualmente. `correcciones.json` refleja textos,
+  tiempos, insertados y borrados: por segmento `id`, `texto_original`, `texto_nuevo`,
+  `start_original`, `start_nuevo`, `end_original`, `end_nuevo`, `insertado`, `borrado` (los tiempos
+  van en segundos SIN offset; el SRT es quien lo aplica).
+- **Descartar cambios guardados**: borra `localStorage` previa confirmación (también textos, tiempos,
+  insertados, borrados y offset).
 
 ### Colores de las palabras
 
@@ -87,6 +115,8 @@ constante entre el audio y los subtítulos:
 | `J` | segmento siguiente |
 | `K` | segmento anterior |
 | `R` | marcar / desmarcar revisado |
+| `I` | «Inicio aquí»: fijar el `start` del segmento activo al instante actual del audio |
+| `O` | «Fin aquí»: fijar el `end` del segmento activo al instante actual del audio |
 | `,` | offset −50 ms |
 | `.` | offset +50 ms |
 

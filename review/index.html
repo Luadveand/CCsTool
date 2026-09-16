@@ -43,6 +43,8 @@
     <button class="btn filt" data-filter="all">Todos</button>
     <button class="btn filt" data-filter="dudosos">Solo dudosos</button>
     <button class="btn filt" data-filter="pendientes">Sin revisar</button>
+    <button class="btn filt" data-filter="tiempo">Con problemas de tiempo</button>
+    <button class="btn filt" data-filter="borrados">Borrados</button>
   </div>
 
   <div class="group">
@@ -56,9 +58,12 @@
     <span class="badge" id="cDud">dudosos 0</span>
     <span class="badge" id="cVis">visibles 0</span>
     <span class="badge hidden" id="cBusca" title="Segmentos que contienen el texto buscado, sin aplicar el filtro activo">coinciden 0</span>
+    <span class="badge" id="cTime" title="Segmentos con end ≤ start, solapes, duración &lt;1 s o &gt;6 s, o velocidad de lectura &gt;21 cps">0 con problemas de tiempo</span>
+    <span class="badge hidden" id="cDel">borrados 0</span>
   </div>
 
   <div class="group">
+    <button id="insertHere" class="btn" title="Subtítulo nuevo y vacío en la posición actual del audio (2 s)">+ Insertar aquí</button>
     <button id="expSrt" class="btn primary">Exportar TRANSCRIPT_revisado.srt</button>
     <button id="expJson" class="btn">Exportar correcciones .json</button>
   </div>
@@ -72,6 +77,9 @@
   <span class="k"><kbd>K</kbd> anterior</span>
   <span class="k"><kbd>R</kbd> revisado on/off</span>
   <span class="k"><kbd>,</kbd> offset −50 ms</span>
+  <span class="k"><kbd>I</kbd> inicio aquí (marca el start al instante actual)</span>
+  <span class="k"><kbd>O</kbd> fin aquí (marca el end al instante actual)</span>
+  <span class="k muted">Los borrados se pueden restaurar en el filtro «Borrados».</span>
   <span class="k"><kbd>.</kbd> offset +50 ms</span>
   <span class="k legend-normal">p ≥ 0.85</span>
   <span class="k legend-amber">0.60 ≤ p &lt; 0.85</span>

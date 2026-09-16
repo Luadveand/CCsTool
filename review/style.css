@@ -212,6 +212,47 @@ body {
 .w.low { background: var(--red-bg); color: var(--red-fg); }
 .w.playing { text-decoration: underline; text-underline-offset: 2px; }
 
+/* ---------- edición de tiempos ---------- */
+.tsv {
+  cursor: pointer;
+  border-bottom: 1px dotted #555f6d;
+  padding: 0 1px;
+}
+.tsv:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.tin {
+  flex: 1 1 auto;
+  width: 0;
+  min-width: 0;
+  font: 11px var(--mono);
+  padding: 2px 4px;
+  color: var(--fg);
+  background: #121418;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  text-align: right;
+}
+.tin:hover { border-color: #39404d; }
+.tin:focus { outline: none; border-color: var(--accent); }
+.tin.bad { border-color: var(--red-fg); background: var(--red-bg); }
+.btn.nudge {
+  padding: 2px 5px;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.3;
+  touch-action: none;
+}
+.flag-time { color: var(--red-fg); cursor: help; }
+.flag-ins { color: var(--accent); font-weight: 700; }
+.flag-del { color: var(--red-fg); font-weight: 700; }
+.seg.deleted { opacity: .5; }
+.seg.deleted .seg-head, .seg.deleted .seg-text { text-decoration: line-through; text-decoration-color: rgba(255, 158, 148, .5); }
+#cTime.has { color: var(--amber-fg); border-color: #6d5326; }
+
+/* los botones auxiliares de tiempo no participan del layout en reposo
+   (render 319 segs ≈ 10 ms); aparecen al pasar el ratón o con foco */
+.seg .nudge, .seg .aux { display: none; }
+.seg:hover .nudge, .seg:hover .aux,
+.seg:focus-within .nudge, .seg:focus-within .aux { display: inline-block; }
 .seg-actions {
   flex: 0 0 auto;
   display: flex;
