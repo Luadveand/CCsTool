@@ -11,9 +11,16 @@ el SRT definitivo (con el desfase global aplicado) y el JSON de correcciones.
 cd /Users/adrian/Workspace/Subtitulado
 ffmpeg -i "0708.MP3.mpeg" -c:a copy review/audio.mp3      # copia reproducible por el navegador, sin recodificar
 cp out/pelicula_w_words.json review/words.json             # cuando exista
-python3 -m http.server 8765 --directory review
+python3 review/serve.py      # (o python3 serve.py desde dentro de review/)
 # abrir http://localhost:8765
 ```
+
+**No uses `python3 -m http.server`**: no implementa HTTP Range, y sin `206 Partial Content` el
+navegador no puede hacer seek dentro de un MP3 grande — al dar a play vuelve a 0 y arrastrar la
+barra de progreso no funciona. `serve.py` es un servidor estático en stdlib pura con soporte de
+Range completo (escucha solo en `127.0.0.1` para no publicar el audio en la red local;
+usa `--port` y `--directory` si quieres cambiar los valores por defecto, 8765 y `review/`,
+y `--host` si algún día necesitas exponerlo a propósito).
 
 **Importante: `review/audio.mp3` y `review/words.json` NO están en el repositorio.**
 Son copias derivadas y están en `.gitignore`, así que hay que generarlas con los dos
