@@ -169,6 +169,28 @@ definitivo. Su papel en el pipeline: el humano escucha los tramos marcados de ba
 los aislados conservados (listados en `out/resync_report.txt`), corrige, y exporta el
 deliverable final. Detalles en `review/README.md`.
 
+## Servidor de la interfaz de revisión (HTTP Range)
+
+**Síntoma**: al dar a play, el audio volvía a 0 y la barra de progreso no dejaba adelantar.
+
+**Causa confirmada**: `python3 -m http.server` (SimpleHTTP/0.6, Python 3.13.5) ignora la
+cabecera `Range` y responde siempre `200` con el fichero entero
+(`Content-Length: 130429639`), sin `Content-Range` ni `Accept-Ranges`. Sin
+`206 Partial Content` el navegador no puede hacer seek dentro de un MP3 de 130 MB. Se descartó
+la hipótesis alternativa de un reset del frontend: `app.js` no resetea la posición — solo
+asigna `currentTime` en `seekTo()`, y `tick()` únicamente lo lee.
+
+**Solución**: `review/serve.py` — servidor estático en stdlib pura sobre `ThreadingHTTPServer`.
+Parsea `bytes=N-`, `bytes=N-M` y `bytes=-N`, responde `206` con `Content-Range`, `416` para
+rangos insatisfacibles, anuncia `Accept-Ranges: bytes` y transmite en trozos de 64 KB. Escucha
+solo en `127.0.0.1` (opción `--host`) para no publicar el audio en la red local.
+
+**Verificación en Chrome real**: `duration = 5434.54`, `seekable.end(0) = 5434.54`; seek a
+1800 aterriza en 1800 (no en 0), y play avanza 1800 → 1801.93 en 2 s. Integridad de los rangos
+comprobada extrayendo los bytes con `dd` y comparando con `cmp` contra el cuerpo HTTP:
+idénticos. Nota: el navegador headless no sirve para verificar esto porque Chrome suspende el
+media player en pestañas ocultas (`kSuspended`); hay que usar una ventana visible.
+
 ## Cómo reproducir
 
 ```bash
@@ -194,7 +216,9 @@ python3 srt_tools.py emit out/pelicula_w_resync.srt out/TRANSCRIPT
 cp out/pelicula_w_resync.srt out/TRANSCRIPT.srt
 
 # 4) revisión humana con audio (corregir confianza baja y exportar)
-open review/index.html
+ffmpeg -i "0708.MP3.mpeg" -c:a copy review/audio.mp3   # derivado no versionado, si no existe
+cp out/pelicula_w_words.json review/words.json         # derivado no versionado, si no existe
+python3 review/serve.py                                # http://127.0.0.1:8765
 
 # motor descartado (referencia histórica):
 time mlx_whisper "0708.MP3.mpeg" --model mlx-community/whisper-large-v3-turbo \

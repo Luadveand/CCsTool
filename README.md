@@ -75,6 +75,14 @@ Se invoca con el Python del venv (faster-whisper no está en el sistema): `.venv
   python3 srt_tools.py emit out/pelicula_w_resync.srt out/TRANSCRIPT
   ```
 
+### `review/serve.py` — servidor estático con HTTP Range (stdlib pura, con `python3` del sistema)
+
+Servidor de la interfaz de revisión: sirve `review/` respondiendo `206 Partial Content` a cabeceras `Range` (seek de audio grande; `python3 -m http.server` no lo soporta). Escucha en `--host 127.0.0.1`, `--port 8765`, y sirve el directorio `--directory` (por defecto `review/`):
+  ```bash
+  python3 review/serve.py
+  # abrir http://127.0.0.1:8765
+  ```
+
 
 Las reglas exactas de `resync` y del limpiador están en [NOTAS.md](NOTAS.md).
 
@@ -87,7 +95,7 @@ Se midieron dos motores locales sobre el mismo audio ([comparativa completa en N
 | Cómputo | 71.3 s (76× tiempo real) | 543.6 s (10× tiempo real) |
 | Alucinaciones "¡Suscríbete al canal!" | ×20 | **0** |
 | Precisión (mismo pasaje) | "te DECÍA venir volando" | "te HICE venir volando" |
-| Entregable final | 539 seg / 2335 palabras | 297 subtítulos / 1825 palabras (resincronizados) |
+| Entregable final | 539 seg / 2335 palabras | 297 subtítulos / 1851 palabras (resincronizados) |
 
 mlx-whisper es ~7× más rápido, pero se descartó por calidad: fabrica 20 alucinaciones del tipo "¡Suscríbete al canal!" (faster-whisper: 0), genera 47 ventanas degeneradas ≥ 25 s frente a 26, y su transcripción de diálogo es menos fiel. Gana **faster-whisper + VAD**.
 
@@ -100,7 +108,16 @@ mlx-whisper es ~7× más rápido, pero se descartó por calidad: fabrica 20 aluc
 
 ## Revisión humana
 
-`review/` contiene una interfaz local para **revisar los subtítulos escuchando el audio**: colorea cada palabra según la confianza del transcriptor, sigue la reproducción en vivo, permite corregir el texto y exportar el SRT definitivo. Los tramos a mirar están marcados en `out/resync_report.txt` (descartados, aislados conservados, palabras con confianza < 0.6). Abre `review/index.html`; detalles en [`review/README.md`](review/README.md).
+`review/` contiene una interfaz local para **revisar los subtítulos escuchando el audio**: colorea cada palabra según la confianza del transcriptor, sigue la reproducción en vivo, permite corregir el texto y exportar el SRT definitivo. Los tramos a mirar están marcados en `out/resync_report.txt` (descartados, aislados conservados, palabras con confianza < 0.6). No abras `review/index.html` directamente (sin servidor falla el `fetch` de `words.json` y no hay HTTP Range para el seek del audio); arranca `review/serve.py`:
+
+```bash
+ffmpeg -i "0708.MP3.mpeg" -c:a copy review/audio.mp3   # derivado no versionado, si no existe
+cp out/pelicula_w_words.json review/words.json         # derivado no versionado, si no existe
+python3 review/serve.py
+# abrir http://127.0.0.1:8765
+```
+
+Detalles en [`review/README.md`](review/README.md).
 
 Detalle y verificación uno a uno: [NOTAS.md](NOTAS.md).
 
